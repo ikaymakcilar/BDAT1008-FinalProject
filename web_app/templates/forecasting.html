@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forecasting Dashboard</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- Include Plotly -->
+    <style>
+        body {
+            background: url('/static/stock.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container-fluid {
+            background-color: rgba(255, 255, 255, 0.9);  /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 100px; /* Push content down under navbar */
+        }
+        .footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Market Pulse Pro</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/predictions">Predictions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/forecasting">Forecast</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api-documentation">API Documentation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1>Forecasting Dashboard</h1>
+                <h2>Stock Price Forecasts for the Next 10 Days</h2>
+                {% if forecasts %}
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Forecasted Close</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for forecast in forecasts %}
+                            <tr>
+                                <td>{{ forecast.date }}</td>
+                                <td>{{ forecast.predicted_close }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>{{ error }}</p>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div id="forecastGraph" style="width:100%; height:600px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white">
+        <div class="container text-center">
+            <span>&copy; 2024 Market Pulse Pro. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Plotly Graph Script -->
+    <script>
+        var trace1 = {
+            x: {{ historical_dates | tojson }},
+            y: {{ historical_closes | tojson }},
+            mode: 'lines',
+            name: 'Real Close'
+        };
+
+        var trace2 = {
+            x: {{ forecast_dates | tojson }},
+            y: {{ forecast_closes | tojson }},
+            mode: 'lines',
+            name: 'Forecasted Close',
+            line: {dash: 'dot'}
+        };
+
+        var data = [trace1, trace2];
+        var layout = {
+            title: 'Real vs Forecasted Stock Prices',
+            xaxis: {title: 'Date'},
+            yaxis: {title: 'Stock Price (USD)'}
+        };
+
+        Plotly.newPlot('forecastGraph', data, layout);
+    </script>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
