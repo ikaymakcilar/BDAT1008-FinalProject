@@ -29,7 +29,7 @@ def create_spark_session():
 
 spark = create_spark_session()
 
-model_path = "/Users/iremkaymakcilar/BDAT1008-FinalProject/BDAT1008-FinalProject/spark_processor/model"
+model_path = "/Users/iremkaymakcilar/BDAT1008-FinalProject/spark_processor/model"
 model = PipelineModel.load(model_path)
 
 def preprocess_data(df):

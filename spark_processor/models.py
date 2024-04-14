@@ -52,7 +52,7 @@ def build_and_evaluate_model(df):
     r2 = evaluator_r2.evaluate(predictions)
     print(f"R-squared (R2): {r2}")
 
-    model_path = "/Users/iremkaymakcilar/BDAT1008-FinalProject/BDAT1008-FinalProject/spark_processor/model"
+    model_path = "/Users/iremkaymakcilar/BDAT1008-FinalProject/spark_processor/model"
     model.write().overwrite().save(model_path)
     print(f"Model saved successfully at {model_path}")
 
@@ -61,7 +61,7 @@ def build_and_evaluate_model(df):
 
 if __name__ == "__main__":
     spark_session = create_spark_session()
-    filepath = "/Users/iremkaymakcilar/BDAT1008-FinalProject/BDAT1008-FinalProject/spark_processor/data/part-00000-c04ffe34-90a5-47d1-b322-661854b3a230-c000.csv"
+    filepath = "/Users/iremkaymakcilar/BDAT1008-FinalProject/spark_processor/data/part-00000-c04ffe34-90a5-47d1-b322-661854b3a230-c000.csv"
     df = prepare_data(spark_session, filepath)
     model, rmse, mae, r2 = build_and_evaluate_model(df)
 
